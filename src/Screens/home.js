@@ -1,12 +1,11 @@
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, BackHandler } from "react-native";
 import { Button, Text, Content, Container, Spinner, Header, Item, Icon, Input, Left, Right, Body, Title } from 'native-base';
-import MyHeader from '../Components/header';
-//import MyFooter from '../Components/footer';
 import ShowItem from '../Components/showItem';
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-const data = require('../Services/data.json');
-import { getData } from '../Services/dataHndler';
+//const data = require('../Services/mockData.json');
+import DataHandler from '../Services/dataHndler';
+import C from '../Services/constants';
 
 class Home extends Component {
 
@@ -19,18 +18,23 @@ class Home extends Component {
             text: 'Game of',
             error: false
         }
-        getData(this.state.text).then((data) => {
+        DataHandler.getData(this.state.text).then((data) => {//populate shows from the api
             console.log(data);
             this.setState({ data: data, loading: false })
         });
 
     }
 
+    componentDidMount = () => {
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            if (this.state.showSerch) {
+                this.setState({ showSerch: false });
+                return true;
+            }
+        })
+    }
+
     _renderItem = ({ item }) => {
-        //let imageUrl = 'https://via.placeholder.com/220X295';
-        //if (item.show.image) imageUrl = item.show.image.medium
-        //let imageUrl = item.show.image.medium || 'https://via.placeholder.com/220X295';
-        //if (!imageUrl) imageUrl = 'https://via.placeholder.com/220X295';
         return (
             <TouchableOpacity onPress={() => this.props.navigation.navigate('Show', { show: item.show })}>
                 <ShowItem name={item.show.name} imageUrl={item.show.image.medium} rating={item.show.rating.average}></ShowItem>
@@ -39,16 +43,12 @@ class Home extends Component {
     }
 
     _keyExtractor(item) {
-        return item.show.id.toString()
-    }
-
-    setText = (text) => {
-        this.text = text;
+        return item.show.id.toString();
     }
 
     search = () => {
         this.setState({ loading: true });
-        getData(this.state.text).then((data) => {
+        DataHandler.getData(this.state.text).then((data) => {
             //console.log(data);
             if (data.length === 0) {
                 this.setState({ error: true, loading: false })
@@ -66,12 +66,11 @@ class Home extends Component {
     render() {
         return (
             <Container style={styles.box}>
-                {/* <MyHeader title={'TV Shows'}></MyHeader> */}
                 {!this.state.showSerch &&
-                    <Header searchBar={this.state.showSerch} rounded={this.state.showSerch}>
+                    <Header style={styles.header} androidStatusBarColor={C.pageBackgroundColor}>
                         <Left />
                         <Body>
-                            <Title>TV Shows</Title>
+                            <Title style={styles.title}>TV Shows</Title>
                         </Body>
                         <Right>
                             <Button dark transparent onPress={() => this.setState({ showSerch: true })}>
@@ -80,17 +79,17 @@ class Home extends Component {
                         </Right>
                     </Header>}
                 {this.state.showSerch &&
-                    <Header searchBar rounded>
+                    <Header style={styles.header} searchBar rounded androidStatusBarColor={C.pageBackgroundColor}>
                         <Button dark transparent onPress={() => this.setState({ showSerch: false })}>
                             <Icon name="ios-arrow-back" />
                         </Button>
-                        <Item>
+                        <Item style={{ flex: 1 }}>
                             <Icon name="ios-search" />
                             <Input onChangeText={(text) => this.setState({ text })} value={this.state.text} />
+                            <Button style={{ alignSelf: 'center' }} transparent onPress={() => this.search()}>
+                                <Icon name="ios-thumbs-up" />
+                            </Button>
                         </Item>
-                        <Button dark transparent onPress={() => this.search()}>
-                            <Icon name="ios-thumbs-up" />
-                        </Button>
                     </Header >
                 }
 
@@ -112,14 +111,16 @@ class Home extends Component {
 
 const styles = StyleSheet.create({
     box: {
-        backgroundColor: '#424242'
+        backgroundColor: C.pageBackgroundColor
     },
     error: {
         alignSelf: 'center',
         color: 'white',
         marginTop: 30,
         fontSize: 12
-    }
+    },
+    header: { backgroundColor: C.headerColor },
+    title: { color: 'black' }
 })
 
 export default Home;

@@ -1,13 +1,10 @@
 import React, { Component } from "react";
 import { View, Image, StyleSheet } from "react-native";
-import { Header, Body, Title, Left, Button, Text, Right, Icon } from 'native-base';
+import { Text, Icon } from 'native-base';
 
 
 
 class ShowItem extends Component {
-
-
-
     render() {
         return (
             <View style={styles.box}>
@@ -34,7 +31,10 @@ const styles = StyleSheet.create({
 
     },
     image: {
-        width: 72, height: 100, resizeMode: 'cover', marginRight: 10
+        width: 72,
+        height: 100,
+        resizeMode: 'cover',
+        marginRight: 10
     },
     textBox: {
         margin: 10,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
         color: 'white',
         marginLeft: 10
     },
-    arrow:{
+    arrow: {
         alignSelf: 'center',
         color: 'white',
         marginRight: 15
