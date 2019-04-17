@@ -23,6 +23,6 @@
 - react-navigation (3.8.1)
 
 ## Tested on
-[x] iPhone 6
-[x] iOS simulator (iPhone X 12.1)
-[x] Android emulator (Pixel 2 api 23)
+ - [x] iPhone 6
+ - [x] iOS simulator (iPhone X 12.1)
+ - [x] Android emulator (Pixel 2 api 23)
